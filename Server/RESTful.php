@@ -20,8 +20,6 @@ switch ($option) {
     break;
 }
 
-
-header('Content-type: application/json');
 echo $data ;
 
  ?>

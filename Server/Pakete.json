@@ -9,5 +9,10 @@
 		"preis": 300,
     "name": "GTI",
     "bezeichnung": "200ps, Sportback"
-	}]
+	},{
+		"modell": "Golf 61",
+		"preis": 6100,
+		"name": "GTI",
+		"bezeichnung": "6100ps, Sportback"
+		}]
 }

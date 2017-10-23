@@ -179,32 +179,60 @@ public class Generator {
     }
 
     public void parseJson() throws IOException {
-        String modellList = loadModellFromJson("http://localhost/server/restful.php?option=1");
+        loadModellJson();
+        loadPaketeJson();
+    }
+
+    public void loadModellJson(){
+        try {
+        String modellList = null;
+        modellList = loadModellFromJson("http://localhost/server/restful.php?option=1");
+
         JSONObject modellObject = new JSONObject(modellList);
         JSONArray modellArr = modellObject.getJSONArray("modelle");
 
         for(int i=0; i<modellArr.length(); i++){
-            Modell tmpModell = new Modell(modellArr.getJSONObject(i).getDouble("preis"),
+            Modell tmpModell = new Modell(
+                    modellArr.getJSONObject(i).getDouble("preis"),
                     modellArr.getJSONObject(i).getString("name"));
             this.modell.modellHinzufuegen(tmpModell);
         }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void loadPaketeJson(){
+        try {
+            String paketList = loadModellFromJson("http://localhost/server/restful.php?option=2");
+            JSONObject paketObject = new JSONObject(paketList);
+            JSONArray paketArr = paketObject.getJSONArray("pakete");
 
-        String paketList = loadModellFromJson("http://localhost/server/restful.php?option=2");
-        JSONObject paketObject = new JSONObject(paketList);
-        JSONArray paketArr = paketObject.getJSONArray("pakete");
-
-        for(int i=0; i<paketArr.length(); i++){
-            Ausstattung tmpPaket = new Ausstattung(paketArr.getJSONObject(i).getString("modell"),
-                    paketArr.getJSONObject(i).getDouble("preis"),
-                    paketArr.getJSONObject(i).getString("name"),
-                    paketArr.getJSONObject(i).getString("bezeichnung")
-                    );
-            this.ausstattung.paketHinzufuegen(tmpPaket);
+            for (int i = 0; i < paketArr.length(); i++) {
+                Ausstattung tmpPaket = new Ausstattung(paketArr.getJSONObject(i).getString("modell"),
+                        paketArr.getJSONObject(i).getDouble("preis"),
+                        paketArr.getJSONObject(i).getString("name"),
+                        paketArr.getJSONObject(i).getString("bezeichnung")
+                );
+                this.ausstattung.paketHinzufuegen(tmpPaket);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void parseXML(){
+        try {
+            loadModellXML();
+            loadPaketeXML();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadModellXML(){
         try{
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
