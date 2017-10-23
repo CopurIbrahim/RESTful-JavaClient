@@ -1,16 +1,18 @@
 <?php
 
 $option = $_GET['option'];
+$modelle = file_get_contents("./Modell.json");
+$pakete = file_get_contents("./Pakete.json");
 
 if( $option == 1 ) {
-  $data = [ 'a', 'b', 'c' ];
+  $data = $modelle;
 }
 else {
-  $data = [ 'name' => 'Golf 3', 'preis' => 61 ];
+  $data = $pakete;
 }
 
 
 header('Content-type: application/json');
-echo json_encode( $data );
+echo $data ;
 
  ?>

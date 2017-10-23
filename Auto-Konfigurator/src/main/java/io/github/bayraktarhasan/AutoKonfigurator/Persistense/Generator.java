@@ -1,31 +1,33 @@
 package io.github.bayraktarhasan.AutoKonfigurator.Persistense;
 
-import com.google.gson.*;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import io.github.bayraktarhasan.AutoKonfigurator.Business.Ausstattung;
 import io.github.bayraktarhasan.AutoKonfigurator.Business.Modell;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
+
+
 
 public class Generator {
 
     private Modell modell;
     private Ausstattung ausstattung;
+    private String json;
 
     public Generator() {
         this.ausstattung = new Ausstattung("test", 0,"","");
         this.modell = new Modell(0,"");
+        this.json = "";
     }
 
     public void setData() throws IOException {
-        parse();
+        parseJson();
         //loadModell();
         //loadAusstattung();
     }
@@ -130,7 +132,6 @@ public class Generator {
             String output;
 
             while ((output = br.readLine()) != null) {
-                System.out.println(output);
                 result += output;
 
             }
@@ -152,26 +153,30 @@ public class Generator {
         return result;
     }
 
-    public void parse() throws IOException {
-        Gson gson = new Gson();
-       URL url = new URL("http://localhost/restful.php?option=2");
-       InputStreamReader reader = new InputStreamReader(url.openStream());
+    public void parseJson() throws IOException {
+        String modellList = loadModellFromJson("http://localhost/server/restful.php?option=1");
+        JSONObject modellObject = new JSONObject(modellList);
+        JSONArray modellArr = modellObject.getJSONArray("modelle");
 
-       //loadModellFromJson("http://localhost/restful.php?option=2");
-        Modell modell = gson.fromJson(reader, Modell.class);
-
-
-        /*if (first != 0) {
-            double tmpPreis = Double.parseDouble(reader[0]);
-            String tmpName = reader[1];
-            Modell tmpModell = new Modell(tmpPreis, tmpName);
+        for(int i=0; i<modellArr.length(); i++){
+            Modell tmpModell = new Modell(modellArr.getJSONObject(i).getDouble("preis"),
+                    modellArr.getJSONObject(i).getString("name"));
             this.modell.modellHinzufuegen(tmpModell);
-
-        } else {
-            first++;
-        }*/
+        }
 
 
+        String paketList = loadModellFromJson("http://localhost/server/restful.php?option=2");
+        JSONObject paketObject = new JSONObject(paketList);
+        JSONArray paketArr = paketObject.getJSONArray("pakete");
+
+        for(int i=0; i<paketArr.length(); i++){
+            Ausstattung tmpPaket = new Ausstattung(paketArr.getJSONObject(i).getString("modell"),
+                    paketArr.getJSONObject(i).getDouble("preis"),
+                    paketArr.getJSONObject(i).getString("name"),
+                    paketArr.getJSONObject(i).getString("bezeichnung")
+                    );
+            this.ausstattung.paketHinzufuegen(tmpPaket);
+        }
     }
 
 

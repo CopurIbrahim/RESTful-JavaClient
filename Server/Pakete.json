@@ -1,0 +1,13 @@
+{
+	"pakete": [{
+		"modell": "Golf 3",
+		"preis": 3000,
+    "name": "Trendline",
+    "bezeichnung": "Sitz, Heizung"
+	}, {
+    "modell": "Golf 4",
+		"preis": 300,
+    "name": "GTI",
+    "bezeichnung": "200ps, Sportback"
+	}]
+}

@@ -1,0 +1,9 @@
+{
+	"modelle": [{
+		"name": "Golf 3",
+		"preis": 3000
+	}, {
+		"name": "Golf 4",
+		"preis": 4000
+	}]
+}
