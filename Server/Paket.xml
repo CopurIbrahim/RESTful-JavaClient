@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class>
+  <pakete>
+    <modell>Golf 3</modell>
+    <preis>300</preis>
+    <name>Trendline</name>
+    <bezeichnung>Sitzheizung, Rückfahrkamera</bezeichnung>
+  </pakete>
+
+  <pakete>
+    <modell>Golf 4</modell>
+    <preis>500</preis>
+    <name>GTI</name>
+    <bezeichnung>200 PS, Sportback</bezeichnung>
+  </pakete>
+</class>

@@ -4,6 +4,7 @@ import io.github.bayraktarhasan.AutoKonfigurator.Persistense.Generator;
 import io.github.bayraktarhasan.AutoKonfigurator.Presentation.Bestellung;
 import io.github.bayraktarhasan.AutoKonfigurator.Presentation.Menue;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -18,8 +19,9 @@ public class Controller {
     private Menue menue;
 
     private int wahl;
+    private int dbWahl;
 
-    public Controller() throws IOException {
+    public Controller() throws IOException, ParserConfigurationException {
 
         this.scanInt = new Scanner(System.in);
         this.scanString = new Scanner(System.in);
@@ -27,7 +29,8 @@ public class Controller {
         this.menue = new Menue();
 
         this.generator = new Generator();
-        this.generator.setData();
+        this.dbWahl = 2;
+        this.generator.setData(this.dbWahl);
 
         this.wahl = 0;
 
@@ -35,7 +38,7 @@ public class Controller {
         this.auto = new Autokonfigurator(generator);
     }
 
-    public void startProg() throws IOException {
+    public void startProg() throws IOException, ParserConfigurationException {
         int s = 61;
         while (s != 0) {
             this.menue.menueAnzeigen();
@@ -93,9 +96,9 @@ public class Controller {
 
     }
 
-    public void reset() throws IOException {
+    public void reset() throws IOException, ParserConfigurationException {
         this.generator = new Generator();
-        this.generator.setData();
+        this.generator.setData(this.dbWahl);
         this.bestellung = new Bestellung();
         this.auto = new Autokonfigurator(generator);
     }

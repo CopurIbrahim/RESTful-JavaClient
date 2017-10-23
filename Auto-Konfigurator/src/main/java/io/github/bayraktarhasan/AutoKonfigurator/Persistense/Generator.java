@@ -4,8 +4,16 @@ import io.github.bayraktarhasan.AutoKonfigurator.Business.Ausstattung;
 import io.github.bayraktarhasan.AutoKonfigurator.Business.Modell;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -26,14 +34,31 @@ public class Generator {
         this.json = "";
     }
 
-    public void setData() throws IOException {
-        parseJson();
-        //loadModell();
-        //loadAusstattung();
+    public void setData(int wahl) throws IOException, ParserConfigurationException {
+        switch (wahl){
+            case 1: {
+                parseCSV();
+                break;
+            }
+            case 2: {
+                parseJson();
+                break;
+            }
+            case 3: {
+                parseXML();
+                break;
+            }
+
+        }
+    }
+
+    public void parseCSV(){
+        loadModell();
+        loadAusstattung();
     }
 
     public void loadModell() {
-        String csvFilePlattform = "C:\\Users\\Haso\\Documents\\GitHub\\RESTfulJava-Client\\Auto-Konfigurator\\src\\main\\java\\io\\github\\bayraktarhasan\\AutoKonfigurator\\Persistense\\Modell.csv";
+        String csvFilePlattform = "C:\\Users\\Haso\\Documents\\GitHub\\RESTful-JavaClient\\Auto-Konfigurator\\src\\main\\java\\io\\github\\bayraktarhasan\\AutoKonfigurator\\Persistense\\Modell.csv";
         BufferedReader br = null;
         FileReader fl = null;
         String line = "";
@@ -65,7 +90,7 @@ public class Generator {
     }
 
     public void loadAusstattung() {
-        String csvFileModell = "C:\\Users\\Haso\\Documents\\GitHub\\RESTfulJava-Client\\Auto-Konfigurator\\src\\main\\java\\io\\github\\bayraktarhasan\\AutoKonfigurator\\Persistense\\Ausstattung.csv";
+        String csvFileModell = "C:\\Users\\Haso\\Documents\\GitHub\\RESTful-JavaClient\\Auto-Konfigurator\\src\\main\\java\\io\\github\\bayraktarhasan\\AutoKonfigurator\\Persistense\\Ausstattung.csv";
         BufferedReader br = null;
         FileReader fl = null;
         String line = "";
@@ -177,6 +202,71 @@ public class Generator {
                     );
             this.ausstattung.paketHinzufuegen(tmpPaket);
         }
+    }
+
+    public void parseXML(){
+        try{
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new URL("http://localhost/server/restful.php?option=3").openStream());
+            doc.getDocumentElement().normalize();
+            NodeList nList = doc.getElementsByTagName("modell");
+
+            for(int i=0; i <nList.getLength(); i++){
+                Node nNode = nList.item(i);
+
+                if(nNode.getNodeType() == Node.ELEMENT_NODE){
+                    Element eElement = (Element) nNode;
+                    Modell tmpModell = new Modell(
+                            Double.parseDouble(eElement.getElementsByTagName("preis").item(0).getTextContent()),
+                            eElement.getElementsByTagName("name").item(0).getTextContent()
+                    );
+                    this.modell.modellHinzufuegen(tmpModell);
+                }
+            }
+
+            loadPaketeXML();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadPaketeXML() throws ParserConfigurationException, IOException {
+        try{
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new URL("http://localhost/server/restful.php?option=4").openStream());
+            doc.getDocumentElement().normalize();
+            NodeList nList = doc.getElementsByTagName("pakete");
+
+            for(int i=0; i <nList.getLength(); i++) {
+                Node nNode = nList.item(i);
+
+                if(nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    Ausstattung tmpAusstattung = new Ausstattung(
+                            eElement.getElementsByTagName("modell").item(0).getTextContent(),
+                            Double.parseDouble(eElement.getElementsByTagName("preis").item(0).getTextContent()),
+                            eElement.getElementsByTagName("name").item(0).getTextContent(),
+                            eElement.getElementsByTagName("bezeichnung").item(0).getTextContent());
+
+                    this.ausstattung.paketHinzufuegen(tmpAusstattung);
+                }
+            }
+            } catch (SAXException e1) {
+            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 

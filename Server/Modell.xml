@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class>
+  <modell>
+    <name>Golf 3</name>
+    <preis>100</preis>
+  </modell>
+
+  <modell>
+    <name>Golf 4</name>
+    <preis>200</preis>
+  </modell>
+</class>
